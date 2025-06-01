@@ -1,0 +1,28 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "luminova_web",
+            "cwd": "luminova_web",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "luminova_web (profile mode)",
+            "cwd": "luminova_web",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+         {
+            "name": "luminova_web (chrome)",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "chrome",
+           
+        }
+    ]
+}
