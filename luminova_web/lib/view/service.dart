@@ -26,7 +26,7 @@ class _ServiceState extends State<Service> with SingleTickerProviderStateMixin {
 
   final Map sectionService = {
     'Installation solaires': {
-      'img': 'assets/pann.png',
+      'img': 'assets/Psolaire.jpg',
       'imgTitle':
           "L'énergie solaire permet de réduire vos factures d'électricité en utilisant une énergie propre, et augmenter la valeur de votre habitation.",
       "section": {
@@ -57,7 +57,7 @@ class _ServiceState extends State<Service> with SingleTickerProviderStateMixin {
       },
     },
     'Pompe à chaleur': {
-      'img': 'assets/radia.png',
+      'img': 'assets/pompe.jpg',
       'imgTitle':
           "La pompe à chaleur capte l’énergie naturelle de l’air, de l’eau ou du sol pour chauffer votre logement ou produire de l’eau chaude, tout en réduisant votre consommation d’énergie.",
       'section': {
@@ -89,7 +89,7 @@ class _ServiceState extends State<Service> with SingleTickerProviderStateMixin {
     },
 
     'Borne de recharge pour véhicule électrique': {
-      'img': 'assets/sunlight-socketed-AMql3aXGjJHEj9nW.webp',
+      'img': 'assets/charge.jpg',
       'imgTitle':
           "Une borne de recharge à domicile vous permet de recharger votre voiture électrique rapidement,\n en toute sécurité et à moindre coût.",
       'section': {
@@ -121,7 +121,7 @@ class _ServiceState extends State<Service> with SingleTickerProviderStateMixin {
     },
 
     'Batterie de stockage': {
-      'img': 'assets/sunlight-socketed-AMql3aXGjJHEj9nW.png',
+      'img': 'assets/batterie.jpg',
       'imgTitle':
           "Une batterie de stockage vous permet de conserver l’énergie solaire produite par vos panneaux photovoltaïques pour l’utiliser lorsque vous en avez besoin, même lorsque le soleil ne brille pas.",
       'section': {
@@ -158,68 +158,70 @@ class _ServiceState extends State<Service> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final cardWidth = screenWidth * 0.4;
     final cardHeight =
         (screenWidth < 600)
-            ? 1000
+            ? 1308
             : (screenWidth < 1050)
-            ? 850
-            : 700;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 30, 0, 10),
-          child: Center(
-            child: SizedBox(
-              width: screenWidth * 0.9,
-              child: TabBar(
-                controller: _tabController,
-                labelStyle: GoogleFonts.inter(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-                tabs: const [
-                  Tab(text: 'Installation solaires'),
-                  Tab(text: 'Pompe à chaleur'),
-                  Tab(text: 'Borne de recharge pour véhicule électrique'),
-                  Tab(text: 'Batterie de stockage'),
-                ],
-                indicator: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFFFF3825), Color(0xFFFC6C0D)],
+            ? 1078
+            : 900;
+    return Container(
+      height: cardHeight.toDouble(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 30, 0, 10),
+            child: Center(
+              child: SizedBox(
+                width: screenWidth * 0.9,
+                child: TabBar(
+                  controller: _tabController,
+                  labelStyle: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
                   ),
-                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                  tabs: const [
+                    Tab(text: 'Installation solaires'),
+                    Tab(text: 'Pompe à chaleur'),
+                    Tab(text: 'Borne de recharge pour véhicule électrique'),
+                    Tab(text: 'Batterie de stockage'),
+                  ],
+                  indicator: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFFFF3825), Color(0xFFFC6C0D)],
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                  ),
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  dividerColor: Colors.transparent,
+                  indicatorColor: Colors.white,
+                  unselectedLabelColor: Colors.grey,
+                  labelColor: Colors.white,
                 ),
-                indicatorSize: TabBarIndicatorSize.tab,
-                dividerColor: Colors.transparent,
-                indicatorColor: Colors.white,
-                unselectedLabelColor: Colors.grey,
-                labelColor: Colors.white,
               ),
             ),
           ),
-        ),
-        const SizedBox(height: 20),
+          const SizedBox(height: 20),
 
-        // ✅ TabBarView sans contraintes fixes
-        SizedBox(
-          // Ici on fixe une hauteur approximative assez grande pour scroll
-          height: cardHeight.toDouble(), // à ajuster selon ton contenu
-          child: TabBarView(
-            controller: _tabController,
-            children:
-                sectionService.entries.map((entry) {
-                  final data = entry.value;
-                  return ServiceRow(
-                    img: data['img'],
-                    imgTitle: data['imgTitle'],
-                    section: data['section'],
-                  );
-                }).toList(),
+          // ✅ TabBarView sans contraintes fixes
+          SizedBox(
+            // Ici on fixe une hauteur approximative assez grande pour scroll
+            height: cardHeight.toDouble(), // à ajuster selon ton contenu
+            child: TabBarView(
+              controller: _tabController,
+              children:
+                  sectionService.entries.map((entry) {
+                    final data = entry.value;
+                    return ServiceRow(
+                      img: data['img'],
+                      imgTitle: data['imgTitle'],
+                      section: data['section'],
+                    );
+                  }).toList(),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -239,86 +241,96 @@ class ServiceRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-
-    return Center(
-      child: Column(
-        children: [
-          // --- Image & Titre comme avant ---
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              Image.asset(
-                img,
-                width: screenWidth,
-                height: 200,
-                fit: BoxFit.cover,
-              ),
-              Container(
-                width: screenWidth,
-                height: 200,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.center,
-                    end: Alignment.topCenter,
-                    colors: [Colors.black54, Colors.transparent],
-                  ),
-                ),
-              ),
-              Container(
-                width: screenWidth,
-                height: 200,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.center,
-                    colors: [
-                      Colors.transparent,
-                      Color.fromARGB(28, 238, 96, 13),
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                child: Text(
-                  imgTitle,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                    shadows: [
-                      Shadow(
-                        blurRadius: 4,
-                        color: Colors.black.withOpacity(0.5),
-                        offset: const Offset(0, 2),
+    final cardHeight =
+        (screenWidth < 600)
+            ? 1308
+            : (screenWidth < 1050)
+            ? 1078
+            : 900;
+    return Stack(
+      children: [
+        Container(
+          height: cardHeight.toDouble(),
+          child: Image.asset(img, width: screenWidth, fit: BoxFit.cover),
+        ),
+        Container(
+          height: cardHeight.toDouble(),
+          child: Center(
+            child: Column(
+              children: [
+                // --- Image & Titre comme avant ---
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      width: screenWidth,
+                      height: 200,
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.center,
+                          end: Alignment.topCenter,
+                          colors: [Colors.black54, Colors.transparent],
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                    Container(
+                      width: screenWidth,
+                      height: 200,
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.center,
+                          colors: [
+                            Colors.transparent,
+                            Color.fromARGB(28, 238, 96, 13),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                      child: Text(
+                        imgTitle,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.inter(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 4,
+                              color: Colors.black.withOpacity(0.5),
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-          // --- Affichage dynamique des sections ---
-          if (section != null)
-            Wrap(
-              spacing: 20,
-              runSpacing: 20,
-              alignment: WrapAlignment.center,
-              children:
-                  section!.entries.map((entry) {
-                    final card = entry.value;
-                    return InfoCard(
-                      icon: card['icon'],
-                      title: card['title'],
-                      description: card['description'],
-                    );
-                  }).toList(),
+                // --- Affichage dynamique des sections ---
+                if (section != null)
+                  Wrap(
+                    spacing: 20,
+                    runSpacing: 20,
+                    alignment: WrapAlignment.center,
+                    children:
+                        section!.entries.map((entry) {
+                          final card = entry.value;
+                          return InfoCard(
+                            icon: card['icon'],
+                            title: card['title'],
+                            description: card['description'],
+                          );
+                        }).toList(),
+                  ),
+              ],
             ),
-        ],
-      ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -338,16 +350,11 @@ class InfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final cardWidth = screenWidth * 0.4;
-    final cardHeight =
-        (screenWidth < 600)
-            ? 330
-            : (screenWidth < 1050)
-            ? 280
-            : 190;
+    final cardWidth =
+        screenWidth > 1000 ? screenWidth * 0.4 : screenWidth * 0.8;
+
     return SizedBox(
       width: cardWidth,
-      height: cardHeight.toDouble(),
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         elevation: 4,

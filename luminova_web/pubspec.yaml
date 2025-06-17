@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  flutter_map: ^8.1.1
   rive: ^0.13.20
   flutter_localization: ^0.3.2
   google_fonts: ^6.2.1
@@ -76,6 +77,12 @@ flutter:
     - assets/dark_mode_solo.riv
     - assets/dark_mode_test.riv
     - assets/1.svg
+    - assets/homepage.jpg
+    - assets/pompe.jpg
+    - assets/Psolaire.jpg
+    - assets/charge.jpg
+    - assets/batterie.jpg
+    - assets/about.jpg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

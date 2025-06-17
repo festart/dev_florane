@@ -60,92 +60,105 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     final isMobile = screenWidth < 600;
 
     return Center(
-      child: Wrap(
-        alignment: WrapAlignment.center,
-        runSpacing: 24,
-        spacing: 24,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          // 🌈 Texte dégradé
-          SizedBox(
-            width: isMobile ? screenWidth * 0.9 : screenWidth * 0.45,
-            height: 100,
-            child: Center(
-              child: ShaderMask(
-                shaderCallback:
-                    (bounds) => const LinearGradient(
-                      colors: [Color(0xFFFC6C0D), Color(0xFFFF3825)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ).createShader(bounds),
-                blendMode: BlendMode.srcIn,
-                child: Text(
-                  "Découvre nos accompagnements !",
-                  style: GoogleFonts.inter(
-                    fontSize: 40,
-                    fontWeight: FontWeight.w500,
-                    letterSpacing: 0.5,
-                    color: Colors.white,
-                  ),
-                  softWrap: true,
-                  maxLines: null,
-                  textAlign: TextAlign.center,
-                ),
+      child: Container(
+        width: screenWidth,
+        height: MediaQuery.of(context).size.height,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(
+              'assets/homepage.jpg',
+            ), // ou NetworkImage pour une URL
+            fit: BoxFit.cover, // ajuste selon ton besoin : cover, contain, etc.
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'Votre expert en solutions énergétiques',
+              style: GoogleFonts.poppins(
+                fontSize: isMobile ? 24 : 60,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              "L'énergie de demain, dès aujourd'hui",
+              style: GoogleFonts.poppins(
+                fontSize: isMobile ? 16 : 35,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 40),
+            HoverButton(isMobile: isMobile),
+
+            const SizedBox(height: 40),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class HoverButton extends StatefulWidget {
+  final bool isMobile;
+
+  HoverButton({required this.isMobile});
+
+  @override
+  _HoverButtonState createState() => _HoverButtonState();
+}
+
+class _HoverButtonState extends State<HoverButton> {
+  bool _isHovering = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _isHovering = true),
+      onExit: (_) => setState(() => _isHovering = false),
+      child: GestureDetector(
+        onTap: () {
+          html.window.open(
+            'https://portal.reonic.de/public/e49d9000-943d-47c7-9331-b03e0f1eb0fd/energyhouse?userId=8d8139bf-f9db-4c1e-ace6-bbbce3f1ade8&state=eyJhY3RpdmVTdGVwIjoiaW50cm8iLCJpbnRyb0NvbmZpcm1lZCI6ZmFsc2UsInNvbGFyUGFja2FnZSI6eyJleGlzdGluZyI6ZmFsc2V9LCJzZXNQYWNrYWdlIjp7ImV4aXN0aW5nIjpmYWxzZX0sIndhbGxib3hQYWNrYWdlIjp7ImV4aXN0aW5nIjpmYWxzZX0sImhlYXRpbmdQYWNrYWdlIjp7ImV4aXN0aW5nIjpmYWxzZX0sImhlYXRpbmdFeGlzdGluZyI6eyJleGlzdGluZyI6ZmFsc2V9fQ%3D%3D',
+            '_blank',
+          );
+        },
+        child: AnimatedContainer(
+          duration: Duration(milliseconds: 100),
+          curve: Curves.easeInOut,
+          padding: EdgeInsets.symmetric(
+            horizontal: widget.isMobile ? 35 : 50,
+            vertical: widget.isMobile ? 10 : 12,
+          ),
+          decoration: BoxDecoration(
+            color: _isHovering ? Colors.grey.shade800 : Colors.grey.shade300,
+            borderRadius: BorderRadius.circular(50),
+            boxShadow:
+                _isHovering
+                    ? [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 10,
+                        offset: Offset(0, 4),
+                      ),
+                    ]
+                    : [],
+          ),
+          child: Text(
+            'Commencer',
+            style: GoogleFonts.poppins(
+              fontSize: widget.isMobile ? 16 : 25,
+              color: _isHovering ? Colors.white : Colors.black87,
+              fontWeight: FontWeight.w300,
             ),
           ),
-          if (isMobile) ...[
-            ElevatedButton(
-              onPressed: () {
-                html.window.open(
-                  'https://portal.reonic.de/public/e49d9000-943d-47c7-9331-b03e0f1eb0fd/energyhouse?userId=8d8139bf-f9db-4c1e-ace6-bbbce3f1ade8&state=eyJhY3RpdmVTdGVwIjoiaW50cm8iLCJpbnRyb0NvbmZpcm1lZCI6ZmFsc2UsInNvbGFyUGFja2FnZSI6eyJleGlzdGluZyI6ZmFsc2V9LCJzZXNQYWNrYWdlIjp7ImV4aXN0aW5nIjpmYWxzZX0sIndhbGxib3hQYWNrYWdlIjp7ImV4aXN0aW5nIjpmYWxzZX0sImhlYXRpbmdQYWNrYWdlIjp7ImV4aXN0aW5nIjpmYWxzZX0sImhlYXRpbmdFeGlzdGluZyI6eyJleGlzdGluZyI6ZmFsc2V9fQ%3D%3D',
-                  '_blank',
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFC6C0D),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 16,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                "Commencer",
-                style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ] else ...[
-            MouseRegion(
-              cursor: SystemMouseCursors.click,
-              child: GestureDetector(
-                onTap: () {
-                  html.window.open(
-                    'https://portal.reonic.de/public/e49d9000-943d-47c7-9331-b03e0f1eb0fd/energyhouse?userId=8d8139bf-f9db-4c1e-ace6-bbbce3f1ade8&state=eyJhY3RpdmVTdGVwIjoiaW50cm8iLCJpbnRyb0NvbmZpcm1lZCI6ZmFsc2UsInNvbGFyUGFja2FnZSI6eyJleGlzdGluZyI6ZmFsc2V9LCJzZXNQYWNrYWdlIjp7ImV4aXN0aW5nIjpmYWxzZX0sIndhbGxib3hQYWNrYWdlIjp7ImV4aXN0aW5nIjpmYWxzZX0sImhlYXRpbmdQYWNrYWdlIjp7ImV4aXN0aW5nIjpmYWxzZX0sImhlYXRpbmdFeGlzdGluZyI6eyJleGlzdGluZyI6ZmFsc2V9fQ%3D%3D',
-                    '_blank',
-                  );
-                },
-                child: SizedBox(
-                  width: isMobile ? screenWidth * 0.9 : screenWidth * 0.45,
-                  height: MediaQuery.of(context).size.height * 0.6,
-                  child: const rive.RiveAnimation.asset(
-                    'assets/responsive_core.riv',
-                    fit: BoxFit.fitHeight,
-                    stateMachines: ['State Machine 1'],
-                  ),
-                ),
-              ),
-            ),
-          ],
-
-          // 🎥 Animation + lien
-        ],
+        ),
       ),
     );
   }

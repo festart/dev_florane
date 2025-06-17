@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:luminova_web/view/map.dart';
 import 'package:luminova_web/view/rive.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,7 +16,7 @@ class MyAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _MyAppBar();
+    return const _MyAppBar();
   }
 }
 
@@ -39,14 +40,17 @@ class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
   final homeKey = GlobalKey();
   final aboutKey = GlobalKey();
   final servicesKey = GlobalKey();
+  final mapKey = GlobalKey();
   final contactKey = GlobalKey();
+
+  bool isAtTop = true;
 
   @override
   void initState() {
     super.initState();
 
     _scrollController.addListener(_handleScroll);
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
 
     _curtainController = AnimationController(
       vsync: this,
@@ -64,46 +68,31 @@ class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
     _curtainController.forward();
   }
 
-  void scrollTo(GlobalKey key) {
-    Scrollable.ensureVisible(
-      key.currentContext!,
-      duration: const Duration(milliseconds: 600),
-      curve: Curves.easeInOut,
-    );
-  }
-
-  @override
-  void dispose() {
-    _scrollController.removeListener(_handleScroll);
-    _curtainController.dispose();
-    _curtainController.dispose();
-    _tabController.dispose();
-    super.dispose();
-  }
-
   void _handleScroll() {
+    setState(() {
+      isAtTop = _scrollController.offset <= 0;
+    });
+
     RenderBox getBox(GlobalKey key) =>
         key.currentContext?.findRenderObject() as RenderBox;
-
-    final scrollPosition = _scrollController.offset;
 
     final homeOffset = getBox(homeKey).localToGlobal(Offset.zero).dy;
     final aboutOffset = getBox(aboutKey).localToGlobal(Offset.zero).dy;
     final servicesOffset = getBox(servicesKey).localToGlobal(Offset.zero).dy;
+    final mapOffset = getBox(mapKey).localToGlobal(Offset.zero).dy;
     final contactOffset = getBox(contactKey).localToGlobal(Offset.zero).dy;
 
     final offsets = {
       'home': homeOffset,
       'about': aboutOffset,
       'services': servicesOffset,
+      'map': mapOffset,
       'contact': contactOffset,
     };
 
     final visibleSection =
         offsets.entries
-            .where(
-              (entry) => entry.value <= kToolbarHeight + 50,
-            ) // visible part
+            .where((entry) => entry.value <= kToolbarHeight + 50)
             .map((e) => e.key)
             .lastOrNull;
 
@@ -114,44 +103,112 @@ class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
     }
   }
 
+  void scrollTo(GlobalKey key) {
+    final context = key.currentContext;
+    if (context != null) {
+      final renderBox = context.findRenderObject() as RenderBox;
+      final offset =
+          renderBox.localToGlobal(Offset.zero).dy +
+          _scrollController.offset -
+          65; // 👈 On enlève 50 pixels ici
+
+      _scrollController.animateTo(
+        offset,
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_handleScroll);
+    _curtainController.dispose();
+    _tabController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
+      body: Stack(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFFF8F4FA),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 4.0,
-                  offset: const Offset(0, 1),
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Logo à gauche
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      alignment: Alignment.center,
-                      // Image/logo ici si nécessaire
-                    ),
-                  ),
+          // NAVBAR
 
-                  // TabBar centrée
+          // CONTENU PRINCIPAL
+          Positioned(
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _MinScreenHeight(key: homeKey, child: const HomePage()),
+                  _MinScreenHeight(key: aboutKey, child: const AboutPage()),
+                  _MinScreenHeight(key: servicesKey, child: const Service()),
+                  _MinScreenHeight(key: mapKey, child: const MapPage()),
+                  _MinScreenHeight(key: contactKey, child: const ContactPage()),
+                  const Footer(),
+                ],
+              ),
+            ),
+          ),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            decoration: BoxDecoration(
+              color: isAtTop ? Colors.transparent : const Color(0xFF303030),
+              boxShadow:
+                  isAtTop
+                      ? []
+                      : [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 4.0,
+                          offset: const Offset(0, 1),
+                        ),
+                      ],
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // LOGO
+                Image.asset('assets/pann.png', height: 40),
+                if (MediaQuery.of(context).size.width < 900) ...[
+                  PopupMenuButton<String>(
+                    icon: const Icon(Icons.menu, color: Colors.white),
+                    onSelected: (value) {
+                      switch (value) {
+                        case 'home':
+                          scrollTo(homeKey);
+                          break;
+                        case 'about':
+                          scrollTo(aboutKey);
+                          break;
+                        case 'services':
+                          scrollTo(servicesKey);
+                          break;
+                        case 'map':
+                          scrollTo(mapKey);
+                          break;
+                        case 'contact':
+                          scrollTo(contactKey);
+                          break;
+                      }
+                    },
+                    itemBuilder:
+                        (context) => [
+                          _popupItem('Accueil', 'home'),
+                          _popupItem('A propos', 'about'),
+                          _popupItem('Services', 'services'),
+                          _popupItem('Map', 'map'),
+                          _popupItem('Contact', 'contact'),
+                        ],
+                  ),
+                ] else ...[
                   SizedBox(
-                    width: 600,
+                    width: 750,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -171,6 +228,11 @@ class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
                           isActive: currentSection == 'services',
                         ),
                         _NavItem(
+                          label: 'Map',
+                          onTap: () => scrollTo(mapKey),
+                          isActive: currentSection == 'map',
+                        ),
+                        _NavItem(
                           label: 'Contact',
                           onTap: () => scrollTo(contactKey),
                           isActive: currentSection == 'contact',
@@ -178,37 +240,28 @@ class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
                       ],
                     ),
                   ),
-
-                  // Espace vide ou boutons à ajouter ici
-                  const SizedBox(),
                 ],
-              ),
+
+                // NAVIGATION
+                const SizedBox(
+                  width: 40,
+                ), // espace vide à droite (ajuster au besoin)
+              ],
             ),
           ),
 
           const Divider(thickness: 2, color: Colors.black12, height: 0),
-
-          Expanded(
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _MinScreenHeight(key: homeKey, child: const HomePage()),
-                  _MinScreenHeight(key: aboutKey, child: const AboutPage()),
-                  _MinScreenHeight(key: servicesKey, child: const Service()),
-                  _MinScreenHeight(key: contactKey, child: const ContactPage()),
-                  const Footer(),
-                ],
-              ),
-            ),
-          ),
         ],
       ),
     );
   }
 }
 
+PopupMenuItem<String> _popupItem(String label, String value) {
+  return PopupMenuItem<String>(value: value, child: Text(label));
+}
+
+// NAV ITEM
 class _NavItem extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
@@ -230,13 +283,13 @@ class _NavItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+              padding: const EdgeInsets.symmetric(vertical: 12),
               child: Text(
                 label,
                 style: GoogleFonts.inter(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: isActive ? const Color(0xFFFF401C) : Colors.black87,
+                  color: isActive ? const Color(0xFFFF401C) : Colors.white,
                 ),
               ),
             ),
@@ -256,6 +309,7 @@ class _NavItem extends StatelessWidget {
   }
 }
 
+// SECTION WRAPPER
 class _MinScreenHeight extends StatelessWidget {
   final Widget child;
 
@@ -266,7 +320,7 @@ class _MinScreenHeight extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return ConstrainedBox(
-      constraints: BoxConstraints(minHeight: screenHeight),
+      constraints: BoxConstraints(minHeight: screenHeight / 2),
       child: IntrinsicHeight(child: child),
     );
   }
