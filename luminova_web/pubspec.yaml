@@ -28,7 +28,9 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  visibility_detector: ^0.4.0+2
   flutter_map: ^8.1.1
+  flutter_map_marker_popup: ^8.0.1
   rive: ^0.13.20
   flutter_localization: ^0.3.2
   google_fonts: ^6.2.1
@@ -77,12 +79,14 @@ flutter:
     - assets/dark_mode_solo.riv
     - assets/dark_mode_test.riv
     - assets/1.svg
+    - assets/2.svg
     - assets/homepage.jpg
     - assets/pompe.jpg
     - assets/Psolaire.jpg
     - assets/charge.jpg
     - assets/batterie.jpg
     - assets/about.jpg
+    - assets/White_Navy_Modern_Technology_Company_Business_Card-removebg-preview.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

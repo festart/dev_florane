@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:luminova_web/view/about.dart';
+import 'package:luminova_web/view/map.dart';
 import 'package:luminova_web/view/my_app_bar.dart';
 import 'package:luminova_web/view/rive.dart';
 import 'package:luminova_web/view/service.dart';
@@ -47,7 +48,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         GlobalCupertinoLocalizations.delegate,
       ],
       initialRoute: '/',
-      routes: {'/': (context) => const MyAppBar()},
+      routes: {
+        '/': (context) => const MyAppBar(),
+        '/map': (context) => const MapPage(),
+        '/contact': (context) => const ContactPage(),
+      },
     );
+    ;
   }
 }

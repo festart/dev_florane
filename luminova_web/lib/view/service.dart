@@ -250,7 +250,7 @@ class ServiceRow extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          height: cardHeight.toDouble(),
+          height: cardHeight.toDouble() + 100,
           child: Image.asset(img, width: screenWidth, fit: BoxFit.cover),
         ),
         Container(

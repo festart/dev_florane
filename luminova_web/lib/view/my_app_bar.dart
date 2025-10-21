@@ -29,6 +29,7 @@ class _MyAppBar extends StatefulWidget {
 
 class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
   String currentSection = 'home';
+  bool showSinglePage = false;
 
   late final TabController _tabController;
   late final AnimationController _curtainController;
@@ -40,8 +41,7 @@ class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
   final homeKey = GlobalKey();
   final aboutKey = GlobalKey();
   final servicesKey = GlobalKey();
-  final mapKey = GlobalKey();
-  final contactKey = GlobalKey();
+  final partnersKey = GlobalKey();
 
   bool isAtTop = true;
 
@@ -69,6 +69,8 @@ class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
   }
 
   void _handleScroll() {
+    if (showSinglePage) return;
+
     setState(() {
       isAtTop = _scrollController.offset <= 0;
     });
@@ -79,15 +81,13 @@ class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
     final homeOffset = getBox(homeKey).localToGlobal(Offset.zero).dy;
     final aboutOffset = getBox(aboutKey).localToGlobal(Offset.zero).dy;
     final servicesOffset = getBox(servicesKey).localToGlobal(Offset.zero).dy;
-    final mapOffset = getBox(mapKey).localToGlobal(Offset.zero).dy;
-    final contactOffset = getBox(contactKey).localToGlobal(Offset.zero).dy;
+    final partnersOffset = getBox(partnersKey).localToGlobal(Offset.zero).dy;
 
     final offsets = {
       'home': homeOffset,
       'about': aboutOffset,
       'services': servicesOffset,
-      'map': mapOffset,
-      'contact': contactOffset,
+      'partners': partnersOffset,
     };
 
     final visibleSection =
@@ -110,7 +110,7 @@ class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
       final offset =
           renderBox.localToGlobal(Offset.zero).dy +
           _scrollController.offset -
-          65; // 👈 On enlève 50 pixels ici
+          65;
 
       _scrollController.animateTo(
         offset,
@@ -118,6 +118,26 @@ class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
         curve: Curves.easeInOut,
       );
     }
+  }
+
+  void showPage(String section) {
+    setState(() {
+      currentSection = section;
+      showSinglePage = true;
+      _scrollController.jumpTo(0);
+    });
+  }
+
+  void goToScrollSection(GlobalKey key, String section) {
+    setState(() {
+      showSinglePage = false;
+      currentSection = section;
+    });
+
+    // Scroll après reconstruction du widget
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      scrollTo(key);
+    });
   }
 
   @override
@@ -134,8 +154,6 @@ class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // NAVBAR
-
           // CONTENU PRINCIPAL
           Positioned(
             child: SingleChildScrollView(
@@ -143,23 +161,47 @@ class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _MinScreenHeight(key: homeKey, child: const HomePage()),
-                  _MinScreenHeight(key: aboutKey, child: const AboutPage()),
-                  _MinScreenHeight(key: servicesKey, child: const Service()),
-                  _MinScreenHeight(key: mapKey, child: const MapPage()),
-                  _MinScreenHeight(key: contactKey, child: const ContactPage()),
+                  if (!showSinglePage) ...[
+                    _MinScreenHeight(key: homeKey, child: const HomePage()),
+                    _MinScreenHeight(key: aboutKey, child: const AboutPage()),
+                    _MinScreenHeight(key: servicesKey, child: const Service()),
+                    ConstrainedBox(
+                      key: partnersKey,
+                      constraints: BoxConstraints(minHeight: 200),
+                      child: IntrinsicHeight(
+                        child: Container(
+                          color: Colors.grey[200],
+                          child: const Center(
+                            child: Text(
+                              'Nos Partenaires Section (à implémenter)',
+                              style: TextStyle(fontSize: 24),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ] else if (currentSection == 'map') ...[
+                    _MinScreenHeight(child: const MapPage()),
+                  ] else if (currentSection == 'contact') ...[
+                    _MinScreenHeight(child: const ContactPage()),
+                  ],
                   const Footer(),
                 ],
               ),
             ),
           ),
+
+          // APPBAR
           AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
             decoration: BoxDecoration(
-              color: isAtTop ? Colors.transparent : const Color(0xFF303030),
+              color:
+                  (!showSinglePage && isAtTop)
+                      ? Colors.transparent
+                      : const Color(0xFF303030),
               boxShadow:
-                  isAtTop
+                  (!showSinglePage && isAtTop)
                       ? []
                       : [
                         BoxShadow(
@@ -174,26 +216,35 @@ class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 // LOGO
-                Image.asset('assets/pann.png', height: 40),
+                Image.asset(
+                  'assets/White_Navy_Modern_Technology_Company_Business_Card-removebg-preview.png',
+                  height: 40,
+                ),
+
+                /* SvgPicture.asset('assets/1.svg', height: 40),*/
                 if (MediaQuery.of(context).size.width < 900) ...[
                   PopupMenuButton<String>(
                     icon: const Icon(Icons.menu, color: Colors.white),
                     onSelected: (value) {
                       switch (value) {
                         case 'home':
-                          scrollTo(homeKey);
+                          goToScrollSection(homeKey, 'home');
                           break;
                         case 'about':
-                          scrollTo(aboutKey);
+                          goToScrollSection(aboutKey, 'about');
                           break;
                         case 'services':
-                          scrollTo(servicesKey);
+                          goToScrollSection(servicesKey, 'services');
                           break;
+                        case 'partners':
+                          goToScrollSection(partnersKey, 'partners');
+                          break;
+
                         case 'map':
-                          scrollTo(mapKey);
+                          showPage('map');
                           break;
                         case 'contact':
-                          scrollTo(contactKey);
+                          showPage('contact');
                           break;
                       }
                     },
@@ -202,50 +253,59 @@ class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
                           _popupItem('Accueil', 'home'),
                           _popupItem('A propos', 'about'),
                           _popupItem('Services', 'services'),
+                          _popupItem('Nos partenaires', 'partners'),
                           _popupItem('Map', 'map'),
                           _popupItem('Contact', 'contact'),
                         ],
                   ),
                 ] else ...[
                   SizedBox(
-                    width: 750,
+                    width: 900,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         _NavItem(
                           label: 'Accueil',
-                          onTap: () => scrollTo(homeKey),
-                          isActive: currentSection == 'home',
+                          onTap: () => goToScrollSection(homeKey, 'home'),
+                          isActive: currentSection == 'home' && !showSinglePage,
                         ),
                         _NavItem(
                           label: 'A propos',
-                          onTap: () => scrollTo(aboutKey),
-                          isActive: currentSection == 'about',
+                          onTap: () => goToScrollSection(aboutKey, 'about'),
+                          isActive:
+                              currentSection == 'about' && !showSinglePage,
                         ),
                         _NavItem(
                           label: 'Services',
-                          onTap: () => scrollTo(servicesKey),
-                          isActive: currentSection == 'services',
+                          onTap:
+                              () => goToScrollSection(servicesKey, 'services'),
+                          isActive:
+                              currentSection == 'services' && !showSinglePage,
                         ),
                         _NavItem(
+                          label: 'Nos partenaires',
+                          onTap:
+                              () => goToScrollSection(partnersKey, 'partners'),
+                          isActive:
+                              currentSection == 'partners' && !showSinglePage,
+                        ),
+
+                        _NavItem(
                           label: 'Map',
-                          onTap: () => scrollTo(mapKey),
-                          isActive: currentSection == 'map',
+                          onTap: () => showPage('map'),
+                          isActive: currentSection == 'map' && showSinglePage,
                         ),
                         _NavItem(
                           label: 'Contact',
-                          onTap: () => scrollTo(contactKey),
-                          isActive: currentSection == 'contact',
+                          onTap: () => showPage('contact'),
+                          isActive:
+                              currentSection == 'contact' && showSinglePage,
                         ),
                       ],
                     ),
                   ),
                 ],
-
-                // NAVIGATION
-                const SizedBox(
-                  width: 40,
-                ), // espace vide à droite (ajuster au besoin)
+                const SizedBox(width: 40),
               ],
             ),
           ),
@@ -320,7 +380,7 @@ class _MinScreenHeight extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return ConstrainedBox(
-      constraints: BoxConstraints(minHeight: screenHeight / 2),
+      constraints: BoxConstraints(minHeight: screenHeight),
       child: IntrinsicHeight(child: child),
     );
   }
