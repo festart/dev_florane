@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "luminova_web",
+      "request": "launch",
+      "type": "dart",
+      "deviceId": "chrome"
+    },
+    {
+      "name": "luminova_web (profile mode)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile",
+      "deviceId": "chrome"
+    },
+    {
+      "name": "luminova_web (release mode)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release",
+      "deviceId": "chrome"
+    }
+  ]
+}

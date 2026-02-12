@@ -10,6 +10,7 @@ import 'package:luminova_web/view/home.dart';
 import 'package:luminova_web/view/service.dart';
 import 'package:luminova_web/view/contact.dart';
 import 'package:luminova_web/view/footer.dart';
+import 'package:luminova_web/view/partner.dart';
 
 class MyAppBar extends StatelessWidget {
   const MyAppBar({super.key});
@@ -96,9 +97,23 @@ class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
             .map((e) => e.key)
             .lastOrNull;
 
-    if (visibleSection != null && visibleSection != currentSection) {
+    String newSection = currentSection;
+
+    if (visibleSection != null) {
+      newSection = visibleSection;
+    }
+
+    // 🟧 Nouvelle condition : si on est presque tout en bas → forcer 'partners'
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.offset;
+
+    if (maxScroll - currentScroll < 200) {
+      newSection = 'partners';
+    }
+
+    if (newSection != currentSection) {
       setState(() {
-        currentSection = visibleSection;
+        currentSection = newSection;
       });
     }
   }
@@ -165,20 +180,11 @@ class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
                     _MinScreenHeight(key: homeKey, child: const HomePage()),
                     _MinScreenHeight(key: aboutKey, child: const AboutPage()),
                     _MinScreenHeight(key: servicesKey, child: const Service()),
-                    ConstrainedBox(
+                    Container(
                       key: partnersKey,
-                      constraints: BoxConstraints(minHeight: 200),
-                      child: IntrinsicHeight(
-                        child: Container(
-                          color: Colors.grey[200],
-                          child: const Center(
-                            child: Text(
-                              'Nos Partenaires Section (à implémenter)',
-                              style: TextStyle(fontSize: 24),
-                            ),
-                          ),
-                        ),
-                      ),
+                      color: Colors.grey[100],
+                      padding: const EdgeInsets.symmetric(vertical: 60),
+                      child: const PartnerSection(),
                     ),
                   ] else if (currentSection == 'map') ...[
                     _MinScreenHeight(child: const MapPage()),
@@ -211,7 +217,7 @@ class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
                         ),
                       ],
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.fromLTRB(17, 15, 0, 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -223,6 +229,7 @@ class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
 
                 /* SvgPicture.asset('assets/1.svg', height: 40),*/
                 if (MediaQuery.of(context).size.width < 900) ...[
+                  const Spacer(),
                   PopupMenuButton<String>(
                     icon: const Icon(Icons.menu, color: Colors.white),
                     onSelected: (value) {
@@ -239,7 +246,6 @@ class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
                         case 'partners':
                           goToScrollSection(partnersKey, 'partners');
                           break;
-
                         case 'map':
                           showPage('map');
                           break;
@@ -248,6 +254,10 @@ class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
                           break;
                       }
                     },
+                    // 🟦 ICI : largeur du menu = largeur écran
+                    constraints: BoxConstraints.tightFor(
+                      width: MediaQuery.of(context).size.width,
+                    ),
                     itemBuilder:
                         (context) => [
                           _popupItem('Accueil', 'home'),
@@ -283,7 +293,7 @@ class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
                               currentSection == 'services' && !showSinglePage,
                         ),
                         _NavItem(
-                          label: 'Nos partenaires',
+                          label: 'Partenaires',
                           onTap:
                               () => goToScrollSection(partnersKey, 'partners'),
                           isActive:
@@ -291,7 +301,7 @@ class _MyAppBarState extends State<_MyAppBar> with TickerProviderStateMixin {
                         ),
 
                         _NavItem(
-                          label: 'Map',
+                          label: 'Carte',
                           onTap: () => showPage('map'),
                           isActive: currentSection == 'map' && showSinglePage,
                         ),

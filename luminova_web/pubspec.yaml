@@ -1,5 +1,5 @@
 name: luminova_web
-description: "A new Flutter project."
+description: "Luminova Energy | Chauffage & Énergies renouvelables en Suisse."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -28,12 +28,16 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  vector_graphics: ^1.1.19
+  url_launcher: ^6.3.2
+  flutter_svg: ^2.2.1
+  http: ^1.5.0
   visibility_detector: ^0.4.0+2
   flutter_map: ^8.1.1
   flutter_map_marker_popup: ^8.0.1
   rive: ^0.13.20
   flutter_localization: ^0.3.2
-  google_fonts: ^6.2.1
+  google_fonts: ^8.0.1
   iconify_flutter: ^0.0.5
   provider: ^6.1.2
   flutter:
@@ -42,6 +46,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  vector_graphics_compiler: ^1.1.19
 
 dev_dependencies:
   flutter_test:
@@ -67,26 +72,12 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/8853485-hd_1920_1080_24fps.mp4
-    - assets/sunlight-socketed-AMql3aXGjJHEj9nW.webp
-    - assets/radia.png
-    - assets/sunlight-socketed-AMql3aXGjJHEj9nW.png
-    - assets/pann.png
-    - assets/energy_saving.riv
-    - assets/fire_logo_top.riv
-    - assets/responsive_core.riv
-    - assets/dark_mode_curtains.riv
-    - assets/dark_mode_solo.riv
-    - assets/dark_mode_test.riv
-    - assets/1.svg
-    - assets/2.svg
-    - assets/homepage.jpg
-    - assets/pompe.jpg
-    - assets/Psolaire.jpg
-    - assets/charge.jpg
-    - assets/batterie.jpg
-    - assets/about.jpg
-    - assets/White_Navy_Modern_Technology_Company_Business_Card-removebg-preview.png
+    - assets/
+    - assets/partners/
+
+vector_graphics:
+  assets:
+    - assets/partners/sigenergy.svg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

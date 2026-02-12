@@ -49,8 +49,8 @@ class Footer extends StatelessWidget {
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   SizedBox(height: 8),
-                  Text("Email : contact@luminova.ch"),
-                  Text("Téléphone : +41 22 123 45 67"),
+                  Text("Email : info@luminova-energy.ch"),
+                  Text("Téléphone : +41 78 253 15 59"),
                 ],
               ),
               Column(

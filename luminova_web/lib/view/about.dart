@@ -109,6 +109,9 @@ class _AboutPageState extends State<AboutPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final bool isMobile = screenWidth < 900;
+    final double titleFontSize = isMobile ? 26 : 40;
+    final double bodyFontSize = isMobile ? 14 : 18;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 10, 0, 60),
@@ -131,14 +134,19 @@ class _AboutPageState extends State<AboutPage> with TickerProviderStateMixin {
                   child: FadeTransition(
                     opacity: _leftAnimation1,
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      crossAxisAlignment:
+                          isMobile
+                              ? CrossAxisAlignment.center
+                              : CrossAxisAlignment.start,
                       children: [
                         Text(
                           'Qui sommes nous ?',
                           style: GoogleFonts.montserrat(
-                            fontSize: 40,
+                            fontSize: titleFontSize,
                             fontWeight: FontWeight.w600,
                           ),
+                          textAlign:
+                              isMobile ? TextAlign.center : TextAlign.start,
                         ),
                         const SizedBox(height: 20),
                         _infoCard(
@@ -160,12 +168,15 @@ class _AboutPageState extends State<AboutPage> with TickerProviderStateMixin {
                   child: FadeTransition(
                     opacity: _rightAnimation1,
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      crossAxisAlignment:
+                          isMobile
+                              ? CrossAxisAlignment.center
+                              : CrossAxisAlignment.start,
                       children: [
                         Text(
                           'Une expertise au service de la rénovation énergétique',
                           style: GoogleFonts.montserrat(
-                            fontSize: 40,
+                            fontSize: titleFontSize,
                             fontWeight: FontWeight.w600,
                           ),
                           textAlign: TextAlign.center,
@@ -223,12 +234,15 @@ class _AboutPageState extends State<AboutPage> with TickerProviderStateMixin {
                             ? screenWidth * 0.4
                             : screenWidth * 0.9,
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      crossAxisAlignment:
+                          isMobile
+                              ? CrossAxisAlignment.center
+                              : CrossAxisAlignment.start,
                       children: [
                         Text(
                           'Pourquoi choisir Luminova Energy ?',
                           style: GoogleFonts.montserrat(
-                            fontSize: 40,
+                            fontSize: titleFontSize,
                             fontWeight: FontWeight.w600,
                           ),
                           textAlign: TextAlign.center,
@@ -257,6 +271,10 @@ class _AboutPageState extends State<AboutPage> with TickerProviderStateMixin {
 
   Widget _infoCard({required String title, required String text}) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final bool isMobile = screenWidth < 900;
+
+    final double titleFontSize = isMobile ? 26 : 40;
+    final double bodyFontSize = isMobile ? 14 : 20;
     return Container(
       constraints: BoxConstraints(
         maxWidth: screenWidth > 1000 ? screenWidth * 0.4 : screenWidth * 0.9,
@@ -264,11 +282,15 @@ class _AboutPageState extends State<AboutPage> with TickerProviderStateMixin {
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment:
+            isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
         children: [
           if (title.isNotEmpty)
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment:
+                  isMobile
+                      ? CrossAxisAlignment.center
+                      : CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
@@ -276,14 +298,18 @@ class _AboutPageState extends State<AboutPage> with TickerProviderStateMixin {
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
+                  textAlign: isMobile ? TextAlign.center : TextAlign.start,
                 ),
                 const SizedBox(height: 12),
               ],
             ),
           Text(
             text,
-            textAlign: TextAlign.justify,
-            style: GoogleFonts.poppins(fontSize: 18, color: Colors.black87),
+            textAlign: isMobile ? TextAlign.center : TextAlign.justify,
+            style: GoogleFonts.poppins(
+              fontSize: bodyFontSize,
+              color: Colors.black87,
+            ),
           ),
         ],
       ),

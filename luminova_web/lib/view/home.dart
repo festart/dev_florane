@@ -65,6 +65,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
+                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
               Text(

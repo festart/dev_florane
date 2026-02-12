@@ -16,6 +16,14 @@ class _ServiceState extends State<Service> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+
+    // 🔔 Rebuild à chaque changement d'onglet (tap, swipe, animateTo)
+    _tabController.addListener(() {
+      // on évite les rebuilds pendant l’animation
+      if (!_tabController.indexIsChanging && mounted) {
+        setState(() {});
+      }
+    });
   }
 
   @override
@@ -158,12 +166,18 @@ class _ServiceState extends State<Service> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 700;
+
     final cardHeight =
         (screenWidth < 600)
             ? 1308
             : (screenWidth < 1050)
             ? 1078
             : 900;
+
+    // Liste des titres (ordre garanti)
+    final titles = sectionService.keys.toList();
+
     return Container(
       height: cardHeight.toDouble(),
       child: Column(
@@ -174,39 +188,75 @@ class _ServiceState extends State<Service> with SingleTickerProviderStateMixin {
             child: Center(
               child: SizedBox(
                 width: screenWidth * 0.9,
-                child: TabBar(
-                  controller: _tabController,
-                  labelStyle: GoogleFonts.inter(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  tabs: const [
-                    Tab(text: 'Installation solaires'),
-                    Tab(text: 'Pompe à chaleur'),
-                    Tab(text: 'Borne de recharge pour véhicule électrique'),
-                    Tab(text: 'Batterie de stockage'),
-                  ],
-                  indicator: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xFFFF3825), Color(0xFFFC6C0D)],
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(4)),
-                  ),
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  dividerColor: Colors.transparent,
-                  indicatorColor: Colors.white,
-                  unselectedLabelColor: Colors.grey,
-                  labelColor: Colors.white,
-                ),
+                child:
+                    isMobile
+                        ? // 📱 Version mobile → Dropdown
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey.shade400),
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.white,
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<int>(
+                              value: _tabController.index,
+                              items: List.generate(
+                                titles.length,
+                                (i) => DropdownMenuItem(
+                                  value: i,
+                                  child: Text(
+                                    titles[i],
+                                    style: GoogleFonts.inter(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              onChanged: (val) {
+                                if (val != null) {
+                                  // 🔥 on met à jour immédiatement le titre affiché
+                                  setState(() {
+                                    _tabController.index = val;
+                                  });
+                                  // puis on lance l'animation du contenu
+                                  _tabController.animateTo(val);
+                                }
+                              },
+
+                              isExpanded: true,
+                              icon: const Icon(Icons.arrow_drop_down),
+                            ),
+                          ),
+                        )
+                        : // 💻 Version desktop → TabBar
+                        TabBar(
+                          controller: _tabController,
+                          labelStyle: GoogleFonts.inter(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          tabs: titles.map((t) => Tab(text: t)).toList(),
+                          indicator: const BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Color(0xFFFF3825), Color(0xFFFC6C0D)],
+                            ),
+                            borderRadius: BorderRadius.all(Radius.circular(4)),
+                          ),
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          dividerColor: Colors.transparent,
+                          indicatorColor: Colors.white,
+                          unselectedLabelColor: Colors.grey,
+                          labelColor: Colors.white,
+                        ),
               ),
             ),
           ),
           const SizedBox(height: 20),
 
-          // ✅ TabBarView sans contraintes fixes
-          SizedBox(
-            // Ici on fixe une hauteur approximative assez grande pour scroll
-            height: cardHeight.toDouble(), // à ajuster selon ton contenu
+          // ✅ Contenu des sections
+          Expanded(
             child: TabBarView(
               controller: _tabController,
               children:

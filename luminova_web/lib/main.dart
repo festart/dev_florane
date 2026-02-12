@@ -39,6 +39,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Luminova Energy',
       debugShowCheckedModeBanner: false,
       locale: const Locale('fr'),
       supportedLocales: const [Locale('fr')],
@@ -54,6 +55,5 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         '/contact': (context) => const ContactPage(),
       },
     );
-    ;
   }
 }

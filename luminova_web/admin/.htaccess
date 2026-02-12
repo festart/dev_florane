@@ -1,0 +1,12 @@
+# Pas d'listing de répertoire
+Options -Indexes
+
+# Empêche la mise en cache de l'admin
+<IfModule mod_headers.c>
+  Header always set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+</IfModule>
+
+# (Optionnel) Forcer HTTPS sur /admin uniquement
+#RewriteEngine On
+#RewriteCond %{HTTPS} off
+#RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
